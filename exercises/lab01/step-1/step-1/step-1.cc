@@ -12,10 +12,7 @@
  * the top level directory of deal.II.
  *
  * ---------------------------------------------------------------------
-
  */
-
-
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/tria_accessor.h>
 #include <deal.II/grid/tria_iterator.h>
@@ -28,9 +25,7 @@
 
 using namespace dealii;
 
-
-void first_grid()
-{
+void first_grid(){
   Triangulation<2> triangulation;
 
   GridGenerator::hyper_cube(triangulation);
@@ -42,31 +37,24 @@ void first_grid()
   std::cout << "Grid written to grid-1.eps" << std::endl;
 }
 
-
-
-
-void second_grid()
-{
+void second_grid(){
   Triangulation<2> triangulation;
 
   const Point<2> center(1, 0);
   const double   inner_radius = 0.5, outer_radius = 1.0;
   GridGenerator::hyper_shell(
-    triangulation, center, inner_radius, outer_radius, 10);
-  for (unsigned int step = 0; step < 5; ++step)
-    {
-      for (auto &cell : triangulation.active_cell_iterators())
-        {
-          for (unsigned int v = 0; v < GeometryInfo<2>::vertices_per_cell; ++v)
-            {
+    triangulation, center, inner_radius, outer_radius,10);
+
+  for (unsigned int step = 0; step < 1; ++step) {
+      for (auto &cell : triangulation.active_cell_iterators()){
+          for (unsigned int v = 0; v < GeometryInfo<2>::vertices_per_cell; ++v){
               const double distance_from_center =
                 center.distance(cell->vertex(v));
-
-              if (std::fabs(distance_from_center - inner_radius) < 1e-10)
-                {
-                  cell->set_refine_flag();
-                  break;
-                }
+            //  if (std::fabs(distance_from_center - inner_radius) < 1e-10){
+              if (cell->center()[1] < 0){
+              cell->set_refine_flag();
+                 break;
+               }//if
             }
         }
 
@@ -74,15 +62,12 @@ void second_grid()
     }
 
 
-  std::ofstream out("grid-2.eps");
+  std::ofstream out("grid-2.svg");
   GridOut       grid_out;
-  grid_out.write_eps(triangulation, out);
+  grid_out.write_svg(triangulation, out);
 
-  std::cout << "Grid written to grid-2.eps" << std::endl;
+  std::cout << "Grid written to grid-2.svg" << std::endl;
 }
-
-
-
 
 int main()
 {

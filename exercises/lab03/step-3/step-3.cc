@@ -54,31 +54,24 @@ using namespace dealii;
 
 
 
-class Step3
-{
+class Step3{
 public:
   Step3 ();
-
   void run ();
-
-
 private:
   void make_grid ();
   void setup_system ();
   void assemble_system ();
   void solve ();
   void output_results () const;
-
   Triangulation<2>     triangulation;
   FE_Q<2>              fe;
   DoFHandler<2>        dof_handler;
-
   SparsityPattern      sparsity_pattern;
   SparseMatrix<double> system_matrix;
-
   Vector<double>       solution;
   Vector<double>       system_rhs;
-};
+};//class
 
 
 Step3::Step3 ()
@@ -87,34 +80,23 @@ Step3::Step3 ()
   dof_handler (triangulation)
 {}
 
-
-
-void Step3::make_grid ()
-{
+void Step3::make_grid (){
   GridGenerator::hyper_cube (triangulation, -1, 1);
   triangulation.refine_global (5);
-
   std::cout << "Number of active cells: "
             << triangulation.n_active_cells()
             << std::endl;
-}
+}//make grid
 
-
-
-
-void Step3::setup_system ()
-{
+void Step3::setup_system (){
   dof_handler.distribute_dofs (fe);
   std::cout << "Number of degrees of freedom: "
-            << dof_handler.n_dofs()
-            << std::endl;
+            << dof_handler.n_dofs()  << std::endl;
 
   DynamicSparsityPattern dsp(dof_handler.n_dofs());
   DoFTools::make_sparsity_pattern (dof_handler, dsp);
   sparsity_pattern.copy_from(dsp);
-
   system_matrix.reinit (sparsity_pattern);
-
   solution.reinit (dof_handler.n_dofs());
   system_rhs.reinit (dof_handler.n_dofs());
 }
